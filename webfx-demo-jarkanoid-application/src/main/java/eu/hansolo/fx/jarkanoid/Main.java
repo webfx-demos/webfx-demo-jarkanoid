@@ -503,11 +503,11 @@ public class Main extends Application {
         if (!IS_BROWSER)
             playMusic(gameStartSnd);
 
-        Shutdown.addShutdownHook(PropertyManager.INSTANCE::storeProperties);
+        Shutdown.addShutdownHook(e -> PropertyManager.INSTANCE.storeProperties());
     }
 
     @Override public void stop() {
-        Shutdown.softwareShutdown(true, 0);
+        Shutdown.exit(0);
         //Platform.exit();
         //System.exit(0);
     }
