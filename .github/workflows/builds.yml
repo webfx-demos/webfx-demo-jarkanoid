@@ -25,7 +25,7 @@ name: Multi-OS builds
 
 on:
   push:
-    branches: [ webfx-new ]
+    branches: [ webfx ]
   workflow_dispatch:
 
 jobs:
