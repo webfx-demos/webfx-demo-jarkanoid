@@ -25,7 +25,7 @@ name: Multi-OS builds
 
 on:
   push:
-    branches: [ webfx ]
+    branches: [ webfx-new ]
   workflow_dispatch:
 
 jobs:
@@ -33,49 +33,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        app: [{name: 'JArkanoid', module-token: 'webfx-demo-jarkanoid', gwt-token: 'webfx_demo_jarkanoid', gluon-token: 'WebFXDemoJarkanoid', gwt-push-branch: 'jarkanoid-gwt', j2cl-push-branch: 'jarkanoid', android-package-name: 'dev.webfx.demo.jarkanoid', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.jarkanoid', version: '0.1.0-SNAPSHOT'}]
-        os-config:  [1, 2, 3, 4]
+        app: [{name: 'JArkanoid', module-token: 'webfx-demo-jarkanoid', gwt-token: 'webfx_demo_jarkanoid', gluon-token: 'WebFXDemoJarkanoid', gwt-push-branch: 'jarkanoid', android-package-name: 'dev.webfx.demo.jarkanoid', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.jarkanoid', version: '0.1.0-SNAPSHOT'}]
+        os-config:  [1]
         include:
           - os-config: 1 # Generates builds 1) 2) 3) 4) & 5)
             os: ubuntu-latest
             # Note: 1) must run on Ubuntu because the GitHub push action (to update the web-build branch) works only on Ubuntu
-            j2cl-artifact-suffix:          'Web.war'                            # build 1)
+            gwt-artifact-suffix:          'Web.war'                            # build 1)
             fatjar-artifact-suffix:        'Linux-x64-runnable.jar'             # build 2)
             jvm-deb-artifact-suffix:       'Linux-x64-jvm-package.deb'          # build 3)
             jvm-rpm-artifact-suffix:       'Linux-x64-jvm-package.rpm'          # build 4)
-            gluon-desktop-arch-token:      'x86_64-linux'                       # build 5)
-            gluon-desktop-artifact-suffix: 'Linux-x64-native-runnable'          # build 5)
-            MVN:                           '/tmp/maven/apache-maven-3.8.8/bin/mvn'
-
-          - os-config: 2 # Generates build 6) - Could be in os-config 1 but moved it a separate config to speed up (parallel run)
-            os: ubuntu-latest
-            gluon-android-arch-token:      'aarch64-android'                    # build 6)
-            gluon-android-apk-suffix:      'Android-aarch64.apk'                # build 6)
-            gluon-android-aab-suffix:      'Android-aarch64.aab'                # build 6)
-            MVN:                           '/tmp/maven/apache-maven-3.8.8/bin/mvn'
-
-          - os-config: 3 # Generates builds 7) 8) 9) & 10)
-            os: windows-latest
-            fatjar-artifact-suffix:        'Windows-x64-runnable.jar'           # build 7)
-            jvm-exe-artifact-suffix:       'Windows-x64-jvm-installer.exe'      # build 8)
-            jvm-msi-artifact-suffix:       'Windows-x64-jvm-installer.msi'      # build 9)
-            gluon-desktop-arch-token:      'x86_64-windows'                     # build 10)
-            # Commented as getting error: Error running candle to generate wixobj
-            # gluon-desktop-artifact-suffix: 'Windows-x64-native-runnable.exe'    # build 10)
-            # msi-desktop-artifact-suffix:   'Windows-x64-jvm-installer.msi'      # build 9)
-            MVN:                           'mvn -D"javafx.platform"="win"'
-
-          - os-config: 4 # Generates builds 11) 12) 13) 14) & 15)
-            os: macos-latest
-            fatjar-artifact-suffix:        'MacOS-x64.jar'                      # build 11)
-            jvm-dmg-artifact-suffix:       'MacOS-x64-jvm.dmg'                  # build 12)
-            jvm-pkg-artifact-suffix:       'MacOS-x64-jvm.pkg'                  # build 13)
-            # Commented MacOS Desktop due to new error from Gluon plugin: No valid Identity (Certificate) found for macOS development.
-            # gluon-desktop-arch-token:      'x86_64-darwin'                      # build 14)
-            # gluon-desktop-Artifact-suffix: 'MacOS-x64-native-runnable'          # build 14)
-            # Note: the iOS build needs the Apple certificate in secrets (the steps will be skipped otherwise)
-            gluon-ios-arch-token:          'arm64-ios'                          # build 15)
-            gluon-ios-artifact-suffix:     'iOS-arm64-native.ipa'               # build 15)
+            #gluon-desktop-arch-token:      'x86_64-linux'                       # build 5)
+            #gluon-desktop-artifact-suffix: 'Linux-x64-native-runnable'          # build 5)
             MVN:                           '/tmp/maven/apache-maven-3.8.8/bin/mvn'
 
     env:
@@ -93,7 +62,7 @@ jobs:
       web-push-username: ${{ github.actor }}
       web-push-email: ${{ secrets.API_GITHUB_EMAIL }}
       jdk-version: '19'
-      xcode-version: '15.4.0'
+      xcode-version: '16.4.0'
       API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       GLUON_LICENSE: ${{ secrets.GLUON_LICENSE }}
       GLUON_ANDROID_VERSION_CODE: ${{ vars.GLUON_ANDROID_VERSION_CODE }}
@@ -134,7 +103,7 @@ jobs:
           mkdir /tmp/download
           mkdir /tmp/maven/
           cd /tmp/download
-          curl -O https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
+          curl -O https://archive.apache.org/dist/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
           tar -xzf apache-maven-3.8.8-bin.tar.gz -C /tmp/maven/
           ${{ matrix.MVN }} -version
 
@@ -186,8 +155,8 @@ jobs:
 
       # Building OpenJFX fat jar and installers (if required)
       - if: matrix.fatjar-artifact-suffix != null
-        name: Build OpenJFX fat jar and installers
-        run: ${{ matrix.MVN }} -B -P 'openjfx-fatjar,openjfx-desktop' package
+        name: Build OpenJFX fat jar
+        run: ${{ matrix.MVN }} -B -P 'openjfx-fatjar' package # ${{ matrix.MVN }} -B -P 'openjfx-fatjar,openjfx-desktop'
         working-directory: ${{ env.app-parent-module-dir }}
 
 
@@ -418,7 +387,7 @@ jobs:
           cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.apk staging/${{ env.app-name }}-${{ matrix.gluon-android-apk-suffix }}
           cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.aab staging/${{ env.app-name }}-${{ matrix.gluon-android-aab-suffix }}
 
-      # Uploading to Google Play (if json provided)
+      # Uploading to Google Play (if JSON provided)
       - if: matrix.gluon-ios-arch-token != null && env.GLUON_ANDROID_SERVICE_ACCOUNT_JSON != ''
         name: Upload to Google Play
         uses: r0adkll/upload-google-play@v1.0.19
@@ -505,7 +474,7 @@ jobs:
 
       # Uploading all artifacts in the assets of this workflow run
       - name: Upload artifacts in the assets of this workflow run
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.os-config }}-assets
           path: staging/*
@@ -531,14 +500,14 @@ jobs:
       # Note: each asset will be a folder containing the artifacts
       - if: env.API_GITHUB_TOKEN != ''
         name: Download artifacts into staging directory
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: download
 
       - name: Make upload directory
         run: mkdir upload
 
-      # Moving all artifact into the upload directory
+      # Moving all artifacts into the upload directory
       - run: find download -type f -exec mv -t upload {} +
 
       # Clearing SNAPSHOT release assets
