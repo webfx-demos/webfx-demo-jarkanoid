@@ -1,0 +1,12 @@
+{
+  "id": "dev.webfx.demo.jarkanoid",
+  "name": "JArkanoid",
+  "short_name": "JArkanoid",
+  "description": "A JavaFX game written by Gerrit Grunwald and transpiled to JS by WebFX",
+  "categories": ["game", "demo"],
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "black",
+  "theme_color": "black",
+  "orientation": "portrait"
+}

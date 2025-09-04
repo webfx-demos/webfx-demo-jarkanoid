@@ -2,6 +2,8 @@ package dev.webfx.platform.boot.j2cl;
 
 import dev.webfx.platform.boot.ApplicationBooter;
 import dev.webfx.platform.boot.spi.ApplicationBooterProvider;
+import dev.webfx.platform.util.gwtj2cl.GwtJ2clUtil;
+
 import org.treblereel.j2cl.processors.annotations.GWT3EntryPoint;
 
 import static dev.webfx.platform.service.gwtj2cl.ServiceRegistry.*;
@@ -12,14 +14,15 @@ public final class J2clEntryPoint implements ApplicationBooterProvider {
     public void entryPoint() {
         registerArrayConstructors();
         registerServiceProviders();
+        GwtJ2clUtil.registerPwa();
         ApplicationBooter.start(this, null);
     }
 
-    public static void registerArrayConstructors() {
+    private static void registerArrayConstructors() {
 
     }
 
-    public static void registerServiceProviders() {
+    private static void registerServiceProviders() {
         register(dev.webfx.kit.launcher.spi.WebFxKitLauncherProvider.class, dev.webfx.kit.launcher.spi.impl.gwtj2cl.GwtJ2clWebFxKitLauncherProvider::new);
         register(dev.webfx.kit.mapper.peers.javafxmedia.spi.WebFxKitMediaMapperProvider.class, dev.webfx.kit.mapper.peers.javafxmedia.spi.gwtj2cl.GwtJ2clWebFxKitMediaMapperProvider::new);
         register(dev.webfx.kit.mapper.spi.WebFxKitMapperProvider.class, dev.webfx.kit.mapper.spi.impl.gwtj2cl.GwtJ2clWebFxKitHtmlMapperProvider::new);

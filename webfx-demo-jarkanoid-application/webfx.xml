@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project applicationId="dev.webfx.demo.jarkanoid" applicationLabel="JArkanoid">
+<project applicationId="dev.webfx.demo.jarkanoid" applicationLabel="JArkanoid" pwa="true">
 
     <exported-packages>
         <source-packages/>

@@ -3,6 +3,10 @@ package dev.webfx.platform.boot.gwt;
 import com.google.gwt.core.client.EntryPoint;
 import dev.webfx.platform.boot.ApplicationBooter;
 import dev.webfx.platform.boot.spi.ApplicationBooterProvider;
+import dev.webfx.platform.util.gwtj2cl.GwtJ2clUtil;
+
+import elemental2.dom.DomGlobal;
+import elemental2.dom.ServiceWorkerContainer;
 
 import static dev.webfx.platform.service.gwtj2cl.ServiceRegistry.*;
 
@@ -13,13 +17,14 @@ public final class GwtEntryPoint implements ApplicationBooterProvider, EntryPoin
         registerArrayConstructors();
         registerServiceProviders();
         ApplicationBooter.start(this, null);
+        GwtJ2clUtil.registerPwa();
     }
 
-    public static void registerArrayConstructors() {
+    private static void registerArrayConstructors() {
 
     }
 
-    public static void registerServiceProviders() {
+    private static void registerServiceProviders() {
         register(dev.webfx.kit.launcher.spi.WebFxKitLauncherProvider.class, dev.webfx.kit.launcher.spi.impl.gwtj2cl.GwtJ2clWebFxKitLauncherProvider::new);
         register(dev.webfx.kit.mapper.peers.javafxmedia.spi.WebFxKitMediaMapperProvider.class, dev.webfx.kit.mapper.peers.javafxmedia.spi.gwtj2cl.GwtJ2clWebFxKitMediaMapperProvider::new);
         register(dev.webfx.kit.mapper.spi.WebFxKitMapperProvider.class, dev.webfx.kit.mapper.spi.impl.gwtj2cl.GwtJ2clWebFxKitHtmlMapperProvider::new);
