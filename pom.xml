@@ -38,7 +38,7 @@
         <module>webfx-demo-jarkanoid-application-gwt</module>
         <module>webfx-demo-jarkanoid-application-j2cl</module>
         <module>webfx-demo-jarkanoid-application-openjfx</module>
-        <module>webfx-demo-jarkanoid-application-teavm</module>
+        <module>webfx-demo-jarkanoid-application-teavm-js</module>
         <module>webfx-demo-jarkanoid-application-teavm-wasm</module>
     </modules>
 
